@@ -1,0 +1,16 @@
+MEMORY
+{
+  FLASH : ORIGIN = 0x00000000, LENGTH = 1M
+  RAM   : ORIGIN = 0x20000000, LENGTH = 256K
+}
+
+ENTRY(Reset);
+
+SECTIONS
+{
+  .text :
+  {
+    KEEP(*(.vector_table.reset_vector));
+    *(.text .text.*);
+  } > RAM
+}
