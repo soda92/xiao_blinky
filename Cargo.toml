@@ -1,6 +1,35 @@
 [package]
 name = "xiao_blinky"
 version = "0.1.0"
-edition = "2024"
+edition = "2021"
 
 [dependencies]
+cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
+cortex-m-rt = { version = "0.7", features = ["device"] }
+# defmt = "1.0"
+# defmt-rtt = "1.1"
+panic-probe = { version = "0.3", features = ["print-rtt"] }
+
+embassy-executor = { version = "0.9.1", features = [
+    "arch-cortex-m",
+    "executor-thread",
+] }
+embassy-time = { version = "0.5.0", default-features = false, features = [
+    "tick-hz-32_768",
+] }
+embassy-nrf = { version = "0.9.0", default-features = false, features = [
+    "nrf52840",
+    "time-driver-rtc1",
+    "gpiote",
+    "unstable-pac",
+    "rt",
+] }
+nrf-pac = { version = "0.2.0", features = ["nrf52840", "rt"] }
+
+[profile.release]
+codegen-units = 1
+debug = 2
+debug-assertions = false
+incremental = false
+opt-level = "s"
+overflow-checks = false
