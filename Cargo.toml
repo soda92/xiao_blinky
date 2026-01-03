@@ -6,26 +6,24 @@ edition = "2021"
 [dependencies]
 cortex-m = { version = "0.7.7", features = ["critical-section-single-core"] }
 cortex-m-rt = { version = "0.7", features = ["device"] }
-panic-probe = { version = "0.3", features = ["print-rtt"] }
+panic-probe = { version = "0.3", features = ["print-defmt"] }
 log = "0.4"
-embassy-usb = { version = "0.5", features = [] }
-embassy-usb-logger = "0.5"
+heapless = "0.8"
 
-embassy-executor = { version = "0.9.1", features = [
-    "arch-cortex-m",
-    "executor-thread",
-] }
-embassy-time = { version = "0.5.0", default-features = false, features = [
-    "tick-hz-32_768",
-] }
-embassy-nrf = { version = "0.9.0", default-features = false, features = [
-    "nrf52840",
-    "time-driver-rtc1",
-    "gpiote",
-    "unstable-pac",
-    "rt",
-] }
-nrf-pac = { version = "0.2.0", features = ["nrf52840", "rt"] }
+# Switch to git versions to ensure compatibility with nrf-softdevice
+embassy-executor = { git = "https://github.com/embassy-rs/embassy", features = ["arch-cortex-m", "executor-thread", "executor-interrupt", "defmt"] }
+embassy-time = { git = "https://github.com/embassy-rs/embassy", features = ["defmt", "defmt-timestamp-uptime", "tick-hz-32_768"] }
+embassy-nrf = { git = "https://github.com/embassy-rs/embassy", features = ["defmt", "nrf52840", "time-driver-rtc1", "gpiote", "unstable-pac"] }
+embassy-sync = { git = "https://github.com/embassy-rs/embassy", features = ["defmt"] }
+embassy-futures = { git = "https://github.com/embassy-rs/embassy" }
+
+# nrf-softdevice
+nrf-softdevice = { git = "https://github.com/embassy-rs/nrf-softdevice", features = ["defmt", "nrf52840", "s140", "ble-peripheral", "ble-gatt-server"] }
+nrf-softdevice-s140 = { git = "https://github.com/embassy-rs/nrf-softdevice" }
+
+# Logging (we'll keep defmt available as it's standard for softdevice debugging)
+defmt = "1.0"
+defmt-rtt = "1.1"
 
 [profile.release]
 codegen-units = 1
