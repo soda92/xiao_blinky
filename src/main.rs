@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-// use defmt_rtt as _; // Disabled
+use defmt_rtt as _;
 use panic_probe as _;
 
 use embassy_executor::Spawner;
@@ -22,16 +22,37 @@ async fn main(_spawner: Spawner) {
     
     let p = embassy_nrf::init(config);
     
-    // P0.26 is Red LED on Seeed XIAO nRF52840 (Active Low)
-    let mut led = Output::new(p.P0_26, Level::High, OutputDrive::Standard);
+    // LEDs are Active Low on Seeed Xiao nRF52840
+    let mut red = Output::new(p.P0_26, Level::High, OutputDrive::Standard);
+    let mut green = Output::new(p.P0_30, Level::High, OutputDrive::Standard);
+    let mut blue = Output::new(p.P0_06, Level::High, OutputDrive::Standard);
+
+    defmt::info!("Starting Colorful Blinky!");
 
     loop {
-        // defmt::info!("Blink ON");
-        led.set_low();
-        Timer::after(Duration::from_millis(200)).await;
+        defmt::info!("Red");
+        red.set_low();
+        Timer::after(Duration::from_millis(300)).await;
+        red.set_high();
         
-        // defmt::info!("Blink OFF");
-        led.set_high();
-        Timer::after(Duration::from_millis(800)).await;
+        defmt::info!("Green");
+        green.set_low();
+        Timer::after(Duration::from_millis(300)).await;
+        green.set_high();
+
+        defmt::info!("Blue");
+        blue.set_low();
+        Timer::after(Duration::from_millis(300)).await;
+        blue.set_high();
+        
+        // Brief pause with all off
+        Timer::after(Duration::from_millis(300)).await;
     }
+}
+
+defmt::timestamp!("{=u64:us}", embassy_time::Instant::now().as_micros());
+
+#[defmt::panic_handler]
+fn panic() -> ! {
+    cortex_m::asm::udf()
 }
